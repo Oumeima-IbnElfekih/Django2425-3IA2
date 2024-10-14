@@ -44,10 +44,12 @@ class Reservation(models.Model):
             raise ValidationError('you can only reserve for upcomming conference')
         reservation_count=Reservation.objects.filter(
             participant=self.participant,
-            reservation_date=self.reservation_date
+            reservation_date__date=timezone.now().date()
         )
-        if reservation_count >= 3:
+        print(reservation_count)
+        if len(reservation_count) >= 2:
             raise ValidationError("You can only make up to 3 reservations per day")
+        
     class Meta:
         unique_together=('conference','participant')
         verbose_name_plural="Reservations"
