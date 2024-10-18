@@ -29,8 +29,8 @@ class Participant(AbstractUser):
     reservations = models.ManyToManyField(Conference,
                                           through='Reservation',
                                           related_name='reservations')
-    created_at= models.DateTimeField(auto_now_add=True)
-    update_at=models.DateTimeField(auto_now=True)
+    created_at= models.DateTimeField(auto_now_add=True,null=True)
+    update_at=models.DateTimeField(auto_now=True,null=True)
 
 
 

@@ -1,0 +1,10 @@
+<h1>Liste des conférences</h1>
+{% for c in conferenceslist %}
+<fieldset>
+    <legend>{{c.title}}</legend>
+    <p>Description: {{c.description}}</p>
+
+</fieldset>
+{% empty %}
+<p>la liste des conférences est vide</p>
+{% endfor %}
