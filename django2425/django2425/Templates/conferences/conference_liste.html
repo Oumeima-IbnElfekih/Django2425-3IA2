@@ -1,11 +1,57 @@
 
 <h1>Liste des conférences</h1>
+<nav>
+    <ul>
+        {% if user.is_authenticated %}
+        <li>Welcome , {{user.username}} , {{user.participant_category }} </li>
+        <li><a href="{% url 'logout'  %}">Logout</a></li>
+        {% else %}
+            <li><a href="{% url 'login'  %}">Login</a></li>
+            <li><a href="{% url 'register'  %}" >Register</a></li>
+        {% endif %}
+    </ul>
+
+</nav>
+{% if user.is_authenticated %}
+{% if user.participant_category == 'enseignant' %}
+<a href="{% url 'conference_create' %}" >Ajouter une conférence</a>
+{% endif %}
+{% endif %}
+<form method="get"  action="{% url 'listeViewconf' %}" >
+<select name="category" onchange="this.form.submit()">
+    <option>---- selectionner un choix ----</option>
+    {% for cat in categories %}
+    <option value="{{cat.id}}">{{cat.title}}</option>
+    {% endfor %}
+</select>
+</form>
 {% for c in conferences %}
 <fieldset>
     <legend>{{c.title}}</legend>
-    <p>Description: {{c.description}}</p>
-    <p>Start date: {{c.start_date}}</p>
-    <a href="{% url 'detailConf' c.id %}" >Details</a>
+    <p><strong>Description:</strong> {{ c.description }}</p>
+    <p><strong>Date de début:</strong> {{ c.start_date }}</p>
+    <p><strong>Date de fin:</strong> {{ c.end_date }}</p>
+    <p><strong>Lieu:</strong> {{ c.location }}</p>
+    <p><strong>Prix:</strong> {{ c.price }} €</p>
+    <p><strong>Capacité:</strong> {{ c.capacity }}</p>
+    <p><strong>Programme:</strong> <a href="{{ c.program.url }}">Télécharger</a></p>
+    <p><strong>Catégorie:</strong> {{ c.category.title }}</p>
+    <a href="{% url 'detailConf' c.id %}" >Détails</a>
+    <br/>
+    <a href="{% url 'conference_update' c.id %}" >Modifier</a>
+    <br/>
+    <a href="{% url 'conference_delete' c.id %}" >Supprimer</a>
+
+    {% if user.is_authenticated %}
+    {% if c.id not in user_reservations %}
+        <form method="post" action="{% url 'reserve' c.id %}">
+            {% csrf_token %}
+            <button type="submit">Reserver</button>
+        </form>
+        {% else %}
+        <p>vous avez reserver</p>
+        {% endif %}
+    {% endif %}
 </fieldset>
 {% empty %}
 <p>la liste des conférences est vide</p>
